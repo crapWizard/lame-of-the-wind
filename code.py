@@ -11,6 +11,23 @@ class Functions:
     def __init__(self):
         self.fnSetBaseStats()
 
+
+        # define faces to change depending on charisma
+        self.happy = """|||||
+{. @ @ .}
+|  o  |
+\_U_/
+"""
+        self.ok = """|||||
+{. @ @ .}
+|  o  |
+\_-_/
+"""
+        self.sad = """|||||
+{. @ @ .}
+|  o  |
+\_^_/"""
+
     def fnInput(self,i):
         playerInput = appBasicGUI.entCmd.get()
 
@@ -25,15 +42,18 @@ class Functions:
         while True:
             # update base stats display
             appBasicGUI.lblBaseStats.config(text="\n" + 'Energy:  ' + str(functions.energy) + "\n" + "\n" +
-                                          'Lute Skill:  ' + str(functions.luteSkill) + "\n" + "\n"
-                                                                                              'Charisma:  ' + str(
-                functions.charisma) + "\n" + "\n" +
-                                          'Appearance:  ' + str(functions.appearance) + "\n" + "\n" +
-                                          'Rank:  ' + str(functions.rank))
+                                        'Lute Skill:  ' + str(functions.luteSkill) + "\n" + "\n" +
+                                        'Charisma:  ' + str(functions.charisma) + "\n" + "\n" +
+                                        'Appearance:  ' + str(functions.appearance) + "\n" + "\n" +
+                                        'Rank:  ' + str(functions.rank)+ "\n" + "\n" +
+                                        "Money: " + str(functions.finalMoney) )
+            # change face depending on charisma and appearance depending on appearance
+            self.fnAppearanceCheck()
+
             # cardinal direction move
 
             # North (up)
-            if playerInput == "n":
+            if playerInput == "w":
                 if self.location[1] > 0 and self.location[0] == 1:
                     self.location[1] -= 1
                     self.energy -= 3
@@ -68,7 +88,7 @@ class Functions:
                     appBasicGUI.txtFrame.insert(INSERT, "There is a barrier, you cannot go in this direction" + '\n')
                     break
             # East (right)
-            elif playerInput == "e":
+            elif playerInput == "d":
                 if self.location[0] < 2:
                     self.location[0] += 1
                     self.energy -= 3
@@ -79,7 +99,7 @@ class Functions:
                     appBasicGUI.txtFrame.insert(INSERT, "There is a barrier, you cannot go in this direction" + '\n')
                     break
             # West (left)
-            elif playerInput == "w":
+            elif playerInput == "a":
                 if self.location[0] > 0:
                     self.location[0] -= 1
                     self.energy -= 3
@@ -96,6 +116,19 @@ class Functions:
                 self.fnMaps()
                 break
 
+            # if in the mess hall, can eat food or chat
+            elif self.location ==[2,1,0]:
+
+               if playerInput == "eat":
+                    appBasicGUI.txtFrame.insert(INSERT, "You ate a delicious sandwich and you feel replenished  \n")
+                    self.energy +=10
+                    break
+               elif playerInput=="chat":
+                    appBasicGUI.txtFrame.insert(INSERT, "You have a pleasant converation with your someone of your fellow students  \n")
+                    self.charisma +=1
+                    break
+
+
             else:
                 appBasicGUI.txtFrame.insert(INSERT, "Sorry, that command was not recognised" + '\n')
                 break
@@ -104,7 +137,28 @@ class Functions:
 
 
 
-
+    def fnAppearanceCheck(self):
+        if functions.charisma > 66:
+            appBasicGUI.lblBaseStats.config(text="\n" + 'Energy:  ' + str(functions.energy) + "\n" + "\n" +
+                                                 'Lute Skill:  ' + str(functions.luteSkill) + "\n" + "\n" +
+                                                 'Charisma:  ' + str(functions.charisma) + "\n" + "\n" +
+                                                 'Appearance:  ' + str(functions.appearance) + "\n" + "\n" +
+                                                 'Rank:  ' + str(functions.rank) + "\n" + "\n" +
+                                                 "Money: " + str(functions.finalMoney) + "\n" + "\n" + self.happy)
+        elif functions.charisma > 33:
+            appBasicGUI.lblBaseStats.config(text="\n" + 'Energy:  ' + str(functions.energy) + "\n" + "\n" +
+                                                 'Lute Skill:  ' + str(functions.luteSkill) + "\n" + "\n" +
+                                                 'Charisma:  ' + str(functions.charisma) + "\n" + "\n" +
+                                                 'Appearance:  ' + str(functions.appearance) + "\n" + "\n" +
+                                                 'Rank:  ' + str(functions.rank) + "\n" + "\n" +
+                                                 "Money: " + str(functions.finalMoney) + "\n" + "\n" + self.ok)
+        else:
+            appBasicGUI.lblBaseStats.config(text="\n" + 'Energy:  ' + str(functions.energy) + "\n" + "\n" +
+                                                 'Lute Skill:  ' + str(functions.luteSkill) + "\n" + "\n" +
+                                                 'Charisma:  ' + str(functions.charisma) + "\n" + "\n" +
+                                                 'Appearance:  ' + str(functions.appearance) + "\n" + "\n" +
+                                                 'Rank:  ' + str(functions.rank) + "\n" + "\n" +
+                                                 "Money: " + str(functions.finalMoney) + "\n" + "\n" + self.sad)
 
     def fnMaps(self):
 
@@ -371,7 +425,19 @@ class Functions:
         # scrolls to newest entry in box
         appBasicGUI.txtFrame.see(END)
 
-
+    def fnMoney(self, money):
+        jonts = int(money)
+        talons = 0
+        marks = 0
+        while jonts >= 10:
+            talons = talons + 1
+            jonts = jonts - 10
+            if talons > 10:
+                marks = marks + 1
+                talons = talons - 10
+        print str(jonts) + " jonts, " + str(talons) + " talons, and " + str(marks) + " marks"
+        strFinalMoney = str(   "\n" + "\n" + str(marks) + " marks" +"\n" +  "\n" +  str(talons) + " talons" +"\n" + "\n" +str(jonts) + " jonts " )
+        return strFinalMoney
 
 
     def fnSetBaseStats(self):
@@ -395,36 +461,75 @@ class Functions:
         self.luteSkill = 0
         self.charisma = random.randrange(0,50)
         self.appearance = random.randrange(0,25)
+        money = random.randrange(0, 200)
+        print money
+        self.finalMoney = self.fnMoney(money)
 
         # set initital rank
         self.rank = 'elir'
 
     def fnDormitory(self):
-        appBasicGUI.txtFrame.insert(INSERT, "You are now in the dormitory.\n")
-        appBasicGUI.txtFrame.insert(INSERT, "Rows of spacious single beds line the walls. A small desk is allocated for each bunk. Bed furnishings are modest, yet comfortable.\n")
+        appBasicGUI.txtFrame.insert(INSERT, "You are now in the dormitory.\n Rows of spacious single beds line the walls. A small desk is allocated for \n each bunk. Bed furnishings are modest, yet comfortable.\n")
         self.energy = 100
         appBasicGUI.txtFrame.insert(INSERT,"Energy fully restored, you may now exit the dormitory\n")
         # scrolls to newest entry in box
         appBasicGUI.txtFrame.see(END)
 
     def fnMessHall(self):
-        print "You are now in the mess hall"
-        response = input('Would you like to eat or chat?')
-        if response == 'eat':
-            self.energy += 10
-        elif response == 'chat':
-            print random.choice(self.chatDialogue)
-            self.charisma += 1
-            input = input("What do you think?")
-            print random.choice(self.chatResponse)
+        appBasicGUI.txtFrame.insert(INSERT, "You are now in the mess hall. \n")
+        appBasicGUI.txtFrame.insert(INSERT, 'Would you like to eat or chat? \n')
+        appBasicGUI.txtFrame.see(END)
+
+
+    def fnHall(self):
+        appBasicGUI.txtFrame.insert(INSERT, "You're in the hall.\n")
+        appBasicGUI.txtFrame.see(END)
+
+    def fnHomeowrkRoom(self):
+        appBasicGUI.txtFrame.insert(INSERT, "A row of recently polished oak deaks stands in one corner. Some music stands lay scattered around a large empty space in the centre of the room. You are now in the practice/homework room.\n")
+        appBasicGUI.txtFrame.see(END)
+
+    def fnLibrary(self):
+        appBasicGUI.txtFrame.insert(INSERT, "You are now in the Library.\n")
+        appBasicGUI.txtFrame.insert(INSERT, "You look around to see rows and rows of bookshelves full of books that can \n be used to study for your class.\n")
+        appBasicGUI.txtFrame.see(END)
+
+    def fnMastersRoom(self):
+        appBasicGUI.txtFrame.insert(INSERT, "You are now in the Masters' Room.\n")
+        appBasicGUI.txtFrame.insert(INSERT, "You are see the Master Artificer, Kilvin and Master Sympathist, Elxa Dal, \n having a debate about the intricacies of Sympathy." +"\n" +
+                                            "However, you aren't knowledgeable enough in Sympathy to understand their \n  discussion. \n")
+        appBasicGUI.txtFrame.insert(INSERT, "The masters don't seem to notice to your presence in the room" + "\n")
+        appBasicGUI.txtFrame.see(END)
+
+    def fnClassroom(self):
+        appBasicGUI.txtFrame.insert(INSERT, "You are now in the Classroom.\n")
+        appBasicGUI.txtFrame.insert(INSERT, "No classes are currently running, so there is no point for you to be in this \n room")
+        appBasicGUI.txtFrame.see(END)
+
 
 
 
     def fnCheckLocation(self):
         if self.location == [0,0,0]:
             self.fnDormitory()
-        elif self.location == [2,2,0]:
+
+        elif self.location == [2,1,0]:
             self.fnMessHall()
+
+        elif self.location == [1,1,0] or self.location == [1,0,0] or self.location == [1,2,0]:
+            self.fnHall()
+
+        elif self.location == [2,0,0]:
+            self.fnHomeowrkRoom()
+
+        elif self.location == [0,1,0]:
+            self.fnClassroom()
+
+        elif self.location ==[0,2,0]:
+            self.fnMastersRoom()
+
+        elif self.location ==[2,2,0]:
+            self.fnLibrary()
 
 
     def fnSetSubjectStats(self):
@@ -454,7 +559,7 @@ class GUI:
         self.master = master
         self.master.title("The Academy")
         self.master.minsize(700, 550)
-        self.master.maxsize(700, 550)
+        self.master.maxsize(900, 800)
         self.fnCreateWidgets()
 
 
@@ -464,7 +569,7 @@ class GUI:
         self.strCmd = StringVar()
 
 
-        self.frWindow = Frame(height=400, width=500)
+        self.frWindow = Frame(height=500, width=400)
         self.frWindow.pack(fill=BOTH, expand=1)
 
         self.txtFrame = Text(self.frWindow, relief = SUNKEN, height = 30, width = 80)
@@ -481,7 +586,9 @@ class GUI:
         'Lute Skill:  '+ str(functions.luteSkill) + "\n" + "\n"
         'Charisma:  ' + str(functions.charisma) + "\n"+  "\n" +
         'Appearance:  ' + str(functions.appearance) + "\n" + "\n"+
-        'Rank:  '+ str(functions.rank))
+        'Rank:  ' + str(functions.rank)+ "\n" + "\n" +
+        "Money: " + str(functions.finalMoney))
+
 
         # entry box for control of character
         self.entCmd = Entry(self.frWindow, relief = SUNKEN, width = 80)
@@ -502,7 +609,6 @@ functions = Functions()
 wdBaseWindow = Tk()
 appBasicGUI = GUI(wdBaseWindow)
 wdBaseWindow.mainloop()
-
 
 
 

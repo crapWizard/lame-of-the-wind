@@ -557,7 +557,7 @@ class GUI:
     # set inital gui stuff
     def __init__(self, master):
         self.master = master
-        self.master.title("The Academy")
+        self.master.title("The University")
         self.master.minsize(700, 550)
         self.master.maxsize(900, 800)
         self.fnCreateWidgets()
